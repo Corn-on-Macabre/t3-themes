@@ -14,6 +14,7 @@ on:
     paths:
       - "themes/**"
       - "src/vendor/**"
+      - "src/lib/git-added-at.mjs"
       - "scripts/sync-demo.sh"
       - "scripts/capture-theme-shots.ts"
       - "scripts/generate-theme-dates.mjs"
