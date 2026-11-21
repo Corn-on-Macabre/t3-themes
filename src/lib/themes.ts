@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import { readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,6 +17,7 @@ import {
   type ThemeColors,
   type ThemeDefinition,
 } from "../vendor/t3code/themePalette";
+import { gitAddedAt } from "./git-added-at.mjs";
 
 export type GalleryTheme = {
   definition: ThemeDefinition;
@@ -53,16 +53,8 @@ function addedAtOf(fileName: string): number {
   const fromManifest = datesManifest[fileName];
   if (fromManifest) return fromManifest;
   try {
-    const log = execFileSync(
-      "git",
-      ["log", "--diff-filter=A", "--follow", "--format=%ct", "--", `themes/${fileName}`],
-      { cwd: repoRoot, encoding: "utf8" },
-    )
-      .trim()
-      .split("\n")
-      .filter(Boolean);
-    const first = log.at(-1);
-    if (first) return Number(first) * 1000;
+    const addedAt = gitAddedAt({ repoRoot, filePath: `themes/${fileName}` });
+    if (addedAt !== undefined) return addedAt;
   } catch {
     // not a git checkout — fall through
   }
